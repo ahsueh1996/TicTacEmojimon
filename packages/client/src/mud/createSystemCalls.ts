@@ -56,7 +56,8 @@ export function createSystemCalls(
     });
 
     try {
-      const tx = await worldSend("move", [x, y]);
+      //const tx = await worldSend("move", [x, y]);
+      const tx = await worldSend("F", [[x, y,0,0,0,1]]);
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
     } finally {
       Position.removeOverride(positionId);
@@ -105,7 +106,8 @@ export function createSystemCalls(
     });
 
     try {
-      const tx = await worldSend("spawn", [x, y]);
+      // const tx = await worldSend("spawn", [x, y]);
+      const tx = await worldSend("F", [[x, y,1,0,0,0]]);
       await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
     } finally {
       Position.removeOverride(positionId);
@@ -124,7 +126,8 @@ export function createSystemCalls(
       throw new Error("no encounter");
     }
 
-    const tx = await worldSend("throwBall", []);
+    // const tx = await worldSend("throwBall", []);    
+    const tx = await worldSend("F", [[0,0,0,0,1,0]]);
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
 
     const catchAttempt = getComponentValue(MonsterCatchAttempt, player);
@@ -136,7 +139,8 @@ export function createSystemCalls(
   };
 
   const fleeEncounter = async () => {
-    const tx = await worldSend("flee", []);
+    // const tx = await worldSend("flee", []);
+    const tx = await worldSend("F", [[0,0,0,1,0,0]]);
     await awaitStreamValue(txReduced$, (txHash) => txHash === tx.hash);
   };
 
