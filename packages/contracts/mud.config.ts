@@ -38,6 +38,7 @@ export default mudConfig({
         result: "MonsterCatchResult",
       },
     },
+    Helloworld: "bool",
     Monster: "MonsterType",
     Movable: "bool",
     Obstruction: "bool",

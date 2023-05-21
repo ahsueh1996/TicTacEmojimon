@@ -8,6 +8,7 @@ import { EncounterTrigger, EncounterTriggerTableId } from "./tables/EncounterTri
 import { Encounterable, EncounterableTableId } from "./tables/Encounterable.sol";
 import { MapConfig, MapConfigTableId } from "./tables/MapConfig.sol";
 import { MonsterCatchAttempt, MonsterCatchAttemptTableId } from "./tables/MonsterCatchAttempt.sol";
+import { Helloworld, HelloworldTableId } from "./tables/Helloworld.sol";
 import { Monster, MonsterTableId } from "./tables/Monster.sol";
 import { Movable, MovableTableId } from "./tables/Movable.sol";
 import { Obstruction, ObstructionTableId } from "./tables/Obstruction.sol";
