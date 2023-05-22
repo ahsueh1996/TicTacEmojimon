@@ -17,10 +17,10 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("MapConfig")));
-bytes32 constant MapConfigTableId = _tableId;
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("MapConfig2")));
+bytes32 constant MapConfig2TableId = _tableId;
 
-library MapConfig {
+library MapConfig2 {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](3);
@@ -43,7 +43,7 @@ library MapConfig {
     _fieldNames[0] = "width";
     _fieldNames[1] = "height";
     _fieldNames[2] = "terrain";
-    return ("MapConfig", _fieldNames);
+    return ("MapConfig2", _fieldNames);
   }
 
   /** Register the table's schema */

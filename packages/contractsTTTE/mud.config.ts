@@ -37,10 +37,10 @@ export default mudConfig({
         encounter: "bytes32",
       },
       schema: {
-        result: "MonsterCatchResult",
+        result: "MonsterCatchResult1",
       },
     },
-    Monster1: "MonsterType",
+    Monster1: "MonsterType1",
     Movable1: "bool",
     Obstruction1: "bool",
     OwnedBy1: "bytes32",
@@ -61,14 +61,14 @@ export default mudConfig({
         terrain: "bytes",
       },
     },
-    Marker2: "MarkerType",
-    Obstruction2: "MarkerType",
+    Marker2: "MarkerType2",
+    Obstruction2: "MarkerType2",
     OwnedBy2: "bytes32",
     Player2: "bool",
     Winner2: {
       keySchema:{},
       schema: {
-        marker: "MarkerType"
+        marker: "MarkerType2"
       }
     },
     Position2: {
@@ -79,13 +79,12 @@ export default mudConfig({
       },
     },
     Map3:{
-      keySchema: { position: "bytes32"},
       dataStruct: false,
       schema: {
-        monster:"MonsterType",
+        monster:"MonsterType1",
         ownedBy: "bytes32"
       }
     },
-    Winner3:"bytes32"
+    Winner3:{keySchema:{},schema:{winningPlayer:"bytes32"}}
   },
 });

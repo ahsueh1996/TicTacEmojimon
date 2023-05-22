@@ -17,17 +17,14 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-// Import user types
-import { MonsterCatchResult } from "./../Types.sol";
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("Encounterable1")));
+bytes32 constant Encounterable1TableId = _tableId;
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("MonsterCatchAtte")));
-bytes32 constant MonsterCatchAttemptTableId = _tableId;
-
-library MonsterCatchAttempt {
+library Encounterable1 {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](1);
-    _schema[0] = SchemaType.UINT8;
+    _schema[0] = SchemaType.BOOL;
 
     return SchemaLib.encode(_schema);
   }
@@ -42,8 +39,8 @@ library MonsterCatchAttempt {
   /** Get the table's metadata */
   function getMetadata() internal pure returns (string memory, string[] memory) {
     string[] memory _fieldNames = new string[](1);
-    _fieldNames[0] = "result";
-    return ("MonsterCatchAttempt", _fieldNames);
+    _fieldNames[0] = "value";
+    return ("Encounterable1", _fieldNames);
   }
 
   /** Register the table's schema */
@@ -68,34 +65,70 @@ library MonsterCatchAttempt {
     _store.setMetadata(_tableId, _tableName, _fieldNames);
   }
 
-  /** Emit the ephemeral event using individual values */
-  function emitEphemeral(bytes32 encounter, MonsterCatchResult result) internal {
-    bytes memory _data = encode(result);
-
+  /** Get value */
+  function get(bytes32 key) internal view returns (bool value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32((encounter));
+    _keyTuple[0] = bytes32((key));
 
-    StoreSwitch.emitEphemeralRecord(_tableId, _keyTuple, _data);
+    bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
+    return (_toBool(uint8(Bytes.slice1(_blob, 0))));
   }
 
-  /** Emit the ephemeral event using individual values (using the specified store) */
-  function emitEphemeral(IStore _store, bytes32 encounter, MonsterCatchResult result) internal {
-    bytes memory _data = encode(result);
-
+  /** Get value (using the specified store) */
+  function get(IStore _store, bytes32 key) internal view returns (bool value) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32((encounter));
+    _keyTuple[0] = bytes32((key));
 
-    _store.emitEphemeralRecord(_tableId, _keyTuple, _data);
+    bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
+    return (_toBool(uint8(Bytes.slice1(_blob, 0))));
+  }
+
+  /** Set value */
+  function set(bytes32 key, bool value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((key));
+
+    StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
+  }
+
+  /** Set value (using the specified store) */
+  function set(IStore _store, bytes32 key, bool value) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((key));
+
+    _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((value)));
   }
 
   /** Tightly pack full data using this table's schema */
-  function encode(MonsterCatchResult result) internal view returns (bytes memory) {
-    return abi.encodePacked(result);
+  function encode(bool value) internal view returns (bytes memory) {
+    return abi.encodePacked(value);
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple(bytes32 encounter) internal pure returns (bytes32[] memory _keyTuple) {
+  function encodeKeyTuple(bytes32 key) internal pure returns (bytes32[] memory _keyTuple) {
     _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32((encounter));
+    _keyTuple[0] = bytes32((key));
+  }
+
+  /* Delete all data for given keys */
+  function deleteRecord(bytes32 key) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((key));
+
+    StoreSwitch.deleteRecord(_tableId, _keyTuple);
+  }
+
+  /* Delete all data for given keys (using the specified store) */
+  function deleteRecord(IStore _store, bytes32 key) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32((key));
+
+    _store.deleteRecord(_tableId, _keyTuple);
+  }
+}
+
+function _toBool(uint8 value) pure returns (bool result) {
+  assembly {
+    result := value
   }
 }

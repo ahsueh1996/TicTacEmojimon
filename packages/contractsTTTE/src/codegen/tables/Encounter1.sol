@@ -17,16 +17,16 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("Encounter")));
-bytes32 constant EncounterTableId = _tableId;
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("Encounter1")));
+bytes32 constant Encounter1TableId = _tableId;
 
-struct EncounterData {
+struct Encounter1Data {
   bool exists;
   bytes32 monster;
   uint256 catchAttempts;
 }
 
-library Encounter {
+library Encounter1 {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](3);
@@ -50,7 +50,7 @@ library Encounter {
     _fieldNames[0] = "exists";
     _fieldNames[1] = "monster";
     _fieldNames[2] = "catchAttempts";
-    return ("Encounter", _fieldNames);
+    return ("Encounter1", _fieldNames);
   }
 
   /** Register the table's schema */
@@ -178,7 +178,7 @@ library Encounter {
   }
 
   /** Get the full data */
-  function get(bytes32 player) internal view returns (EncounterData memory _table) {
+  function get(bytes32 player) internal view returns (Encounter1Data memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32((player));
 
@@ -187,7 +187,7 @@ library Encounter {
   }
 
   /** Get the full data (using the specified store) */
-  function get(IStore _store, bytes32 player) internal view returns (EncounterData memory _table) {
+  function get(IStore _store, bytes32 player) internal view returns (Encounter1Data memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32((player));
 
@@ -216,17 +216,17 @@ library Encounter {
   }
 
   /** Set the full data using the data struct */
-  function set(bytes32 player, EncounterData memory _table) internal {
+  function set(bytes32 player, Encounter1Data memory _table) internal {
     set(player, _table.exists, _table.monster, _table.catchAttempts);
   }
 
   /** Set the full data using the data struct (using the specified store) */
-  function set(IStore _store, bytes32 player, EncounterData memory _table) internal {
+  function set(IStore _store, bytes32 player, Encounter1Data memory _table) internal {
     set(_store, player, _table.exists, _table.monster, _table.catchAttempts);
   }
 
   /** Decode the tightly packed blob using this table's schema */
-  function decode(bytes memory _blob) internal pure returns (EncounterData memory _table) {
+  function decode(bytes memory _blob) internal pure returns (Encounter1Data memory _table) {
     _table.exists = (_toBool(uint8(Bytes.slice1(_blob, 0))));
 
     _table.monster = (Bytes.slice32(_blob, 1));

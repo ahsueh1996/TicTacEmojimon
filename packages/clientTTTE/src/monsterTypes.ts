@@ -22,4 +22,8 @@ export const monsterTypes: Record<MonsterType, MonsterConfig> = {
     name: "Caterpillar",
     emoji: "🐛",
   },
+  [MonsterType.None]: {
+    name: "None",
+    emoji: "",
+  },
 };

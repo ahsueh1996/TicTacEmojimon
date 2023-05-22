@@ -67,7 +67,7 @@ export const GameBoard = () => {
       encounter={
         encounter ? (
           <EncounterScreen
-            monsterName={monster?.name ?? "MissingNo"}
+            monsterName={monster?.name ?? "MissingName"}
             monsterEmoji={monster?.emoji ?? "💱"}
           />
         ) : undefined
