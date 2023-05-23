@@ -2,6 +2,7 @@ export enum MonsterType {
   Eagle = 1,
   Rat,
   Caterpillar,
+  None,
 }
 
 type MonsterConfig = {

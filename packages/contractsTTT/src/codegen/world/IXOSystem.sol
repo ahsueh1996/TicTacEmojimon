@@ -5,4 +5,6 @@ pragma solidity >=0.8.0;
 
 interface IXOSystem {
   function putMarker(uint32 x, uint32 y) external;
+
+  function reset() external;
 }

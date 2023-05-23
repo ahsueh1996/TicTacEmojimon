@@ -5,8 +5,8 @@ import { defineComponent, Type as RecsType, World } from "@latticexyz/recs";
 
 export function defineContractComponents(world: World) {
   return {
-    Encounter1: (() => {
-      const tableId = new TableId("", "Encounter1");
+    Encounter: (() => {
+      const tableId = new TableId("", "Encounter");
       return defineComponent(
         world,
         {
@@ -22,7 +22,7 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    EncounterTrigger1: (() => {
+    EncounterTrigger: (() => {
       const tableId = new TableId("", "EncounterTrigger");
       return defineComponent(
         world,
@@ -37,8 +37,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    Encounterable1: (() => {
-      const tableId = new TableId("", "Encounterable1");
+    Encounterable: (() => {
+      const tableId = new TableId("", "Encounterable");
       return defineComponent(
         world,
         {
@@ -52,8 +52,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    MapConfig1: (() => {
-      const tableId = new TableId("", "MapConfig1");
+    MapConfig: (() => {
+      const tableId = new TableId("", "MapConfig");
       return defineComponent(
         world,
         {
@@ -69,7 +69,7 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    MonsterCatchAttempt1: (() => {
+    MonsterCatchAttempt: (() => {
       const tableId = new TableId("", "MonsterCatchAtte");
       return defineComponent(
         world,
@@ -84,8 +84,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    Monster1: (() => {
-      const tableId = new TableId("", "Monster1");
+    Monster: (() => {
+      const tableId = new TableId("", "Monster");
       return defineComponent(
         world,
         {
@@ -99,8 +99,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    Movable1: (() => {
-      const tableId = new TableId("", "Movable1");
+    Movable: (() => {
+      const tableId = new TableId("", "Movable");
       return defineComponent(
         world,
         {
@@ -114,8 +114,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    Obstruction1: (() => {
-      const tableId = new TableId("", "Obstruction1");
+    Obstruction: (() => {
+      const tableId = new TableId("", "Obstruction");
       return defineComponent(
         world,
         {
@@ -129,8 +129,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    OwnedBy1: (() => {
-      const tableId = new TableId("", "OwnedBy1");
+    OwnedBy: (() => {
+      const tableId = new TableId("", "OwnedBy");
       return defineComponent(
         world,
         {
@@ -144,8 +144,8 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    Player1: (() => {
-      const tableId = new TableId("", "Player1");
+    Player: (() => {
+      const tableId = new TableId("", "Player");
       return defineComponent(
         world,
         {
@@ -159,152 +159,13 @@ export function defineContractComponents(world: World) {
         }
       );
     })(),
-    Position1: (() => {
-      const tableId = new TableId("", "Position1");
+    Position: (() => {
+      const tableId = new TableId("", "Position");
       return defineComponent(
         world,
         {
           x: RecsType.Number,
           y: RecsType.Number,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    MapConfig2: (() => {
-      const tableId = new TableId("", "MapConfig2");
-      return defineComponent(
-        world,
-        {
-          width: RecsType.Number,
-          height: RecsType.Number,
-          terrain: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    Marker2: (() => {
-      const tableId = new TableId("", "Marker2");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.Number,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    Obstruction2: (() => {
-      const tableId = new TableId("", "Obstruction2");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.Number,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    OwnedBy2: (() => {
-      const tableId = new TableId("", "OwnedBy2");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    Player2: (() => {
-      const tableId = new TableId("", "Player2");
-      return defineComponent(
-        world,
-        {
-          value: RecsType.Boolean,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    Winner2: (() => {
-      const tableId = new TableId("", "Winner2");
-      return defineComponent(
-        world,
-        {
-          marker: RecsType.Number,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    Position2: (() => {
-      const tableId = new TableId("", "Position2");
-      return defineComponent(
-        world,
-        {
-          x: RecsType.Number,
-          y: RecsType.Number,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    Map3: (() => {
-      const tableId = new TableId("", "Map3");
-      return defineComponent(
-        world,
-        {
-          monster: RecsType.Number,
-          ownedBy: RecsType.String,
-        },
-        {
-          metadata: {
-            contractId: tableId.toHexString(),
-            tableId: tableId.toString(),
-          },
-        }
-      );
-    })(),
-    Winner3: (() => {
-      const tableId = new TableId("", "Winner3");
-      return defineComponent(
-        world,
-        {
-          winningPlayer: RecsType.String,
         },
         {
           metadata: {

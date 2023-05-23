@@ -12,15 +12,15 @@ export const GameBoard = () => {
   useKeyboardMovement();
 
   const {
-    components: { Encounter, MapConfig, Monster, Player, Position },
+    components: { Encounter1, MapConfig1, Monster1, Player1, Position1 },
     network: { playerEntity, singletonEntity },
-    systemCalls: { spawn },
+    systemCalls: { spawn, getMapMonsterType, getWin },
   } = useMUD();
 
-  const canSpawn = useComponentValue(Player, playerEntity)?.value !== true;
+  const canSpawn = useComponentValue(Player1, playerEntity)?.value !== true;
 
-  const players = useEntityQuery([Has(Player), Has(Position)]).map((entity) => {
-    const position = getComponentValueStrict(Position, entity);
+  const players = useEntityQuery([Has(Player1), Has(Position1)]).map((entity) => {
+    const position = getComponentValueStrict(Position1, entity);
     return {
       entity,
       x: position.x,
@@ -29,7 +29,7 @@ export const GameBoard = () => {
     };
   });
 
-  const mapConfig = useComponentValue(MapConfig, singletonEntity);
+  const mapConfig = useComponentValue(MapConfig1, singletonEntity);
   if (mapConfig == null) {
     throw new Error(
       "map config not set or not ready, only use this hook after loading state === LIVE"
@@ -38,18 +38,27 @@ export const GameBoard = () => {
 
   const { width, height, terrain: terrainData } = mapConfig;
   const terrain = Array.from(hexToArray(terrainData)).map((value, index) => {
-    const { emoji } =
+    let { emoji } =
       value in TerrainType ? terrainTypes[value as TerrainType] : { emoji: "" };
+    if (emoji==terrainTypes[TerrainType.Boulder].emoji && getWin()){
+      emoji = "🎉";
+    }
+    const _x = index % width;
+    const _y = Math.floor(index / width);
+    let mt = getMapMonsterType(_x,_y);
+    if (mt != MonsterType.None) {        
+      emoji = monsterTypes[mt as MonsterType].emoji;
+    } 
     return {
-      x: index % width,
-      y: Math.floor(index / width),
+      x: _x,
+      y: _y,
       emoji,
     };
   });
 
-  const encounter = useComponentValue(Encounter, playerEntity);
+  const encounter = useComponentValue(Encounter1, playerEntity);
   const monsterType = useComponentValue(
-    Monster,
+    Monster1,
     encounter ? (encounter.monster as Entity) : undefined
   )?.value;
   const monster =

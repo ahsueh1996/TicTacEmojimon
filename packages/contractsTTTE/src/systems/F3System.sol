@@ -35,7 +35,10 @@ contract F3System is System {
         uint32 move;
         bytes32 player;
         uint32 o;
-
+        bool winnerFound;
+        MarkerType2 playerMarker;
+        MarkerType2 winningMarker;
+        bytes32 qPos;
     }
 
     function F3(uint32[] memory input) public {
@@ -56,57 +59,112 @@ contract F3System is System {
         if (f3.spawn==1) {
             //spawn in emojimon
             F1([f3.x,f3.y,1,0,0,0]);
+            F2([f3.o,0,1,0,0,0]);
         }
         if (f3.flee==1){
             //exit encounter in emojimon and do not commit to put on TTT
             F1([f3.o,0,0,1,0,0]);
         }
         if (f3.toss==1){
-            //throw ball in emojimon, if the capture is made, commit a put on TTT
-            Encounter1Data memory encounter = Encounter1.get(f3.player);
-            require(encounter.exists, "check from F3 not in encounter");
-            // MonsterCatchResult1 catchResult = MonsterCatchAttempt1.get(player); // This is an ephemeral pattern! so I can't do this
-            //MonsterCatchResult1 catchResult = F1([z,0,0,0,1,0]);        // must extend to have return value.. >>> <<<< this means it's just doesn't work well with this composing protocol
-            MonsterCatchResult1 catchResult = _throwBall(); // F1 signature is not meant to return anything. 
-            if (catchResult == MonsterCatchResult1.Caught){                            
-                //check in TTT to see if there is a win for any player managing to make 3 in a row
-                (uint32 x1, uint32 y1) = Position1.get(f3.player);
-                Map3.set(positionToEntityKey(x1,y1), Monster1.get(encounter.monster), f3.player);
-                // If I don't compute the information each time, I might be hard pressed thinking that i need to extend more states...
-                //     // missing Where are TTT games located?
-                // F2([x_,y_,0,1,0,0]);
-                //     // missing who is represented by what marker
-                // MarkerType = Winner.get();
-                uint32 T21_x = x1-1;  // x2 + T21 = x1 frame transform
-                uint32 T21_y = y1-1;
-                F1([f3.o,0,0,0,0,1]); // reset
-                (uint32 w2, uint32 h2, )=MapConfig2.get();
-                for (uint32 x2=0; x2<w2; x2++){
+          //throw ball in emojimon, if the capture is made, commit a put on TTT
+          Encounter1Data memory encounter = Encounter1.get(f3.player);
+          // require(encounter.exists, "check from F3 not in encounter");
+          // MonsterCatchResult1 catchResult = MonsterCatchAttempt1.get(player); // This is an ephemeral pattern! so I can't do this
+          //MonsterCatchResult1 catchResult = F1([z,0,0,0,1,0]);        // must extend to have return value.. >>> <<<< this means it's just doesn't work well with this composing protocol
+          MonsterCatchResult1 catchResult = _throwBall(); // F1 signature is not meant to return anything. 
+          if (catchResult == MonsterCatchResult1.Caught){
+            Encounter1.deleteRecord(f3.player);                            
+            //check in TTT to see if there is a win for any player managing to make 3 in a row
+            (uint32 x1, uint32 y1) = Position1.get(f3.player);
+            Map3.set(positionToEntityKey(x1,y1), Monster1.get(encounter.monster), f3.player);
+            // If I don't compute the information each time, I might be hard pressed thinking that i need to extend more states...
+            //     // missing Where are TTT games located?
+            // F2([x_,y_,0,1,0,0]);
+            //     // missing who is represented by what marker             
+            (uint32 w2, uint32 h2, )=MapConfig2.get();
+            f3.winnerFound = false;
+            for (uint32 cx=0; cx<w2; cx++){
+                for (uint32 cy=0;cy<h2; cy++){
+                  uint32 T21_x = x1-cx;  // x2 + T21 = x1 frame transform
+                  uint32 T21_y = y1-cy;
+                  F2([f3.o,0,0,0,0,1]); // reset TTT
+                  // _reset2();
+                  for (uint32 x2=0; x2<w2; x2++){
                     for (uint32 y2=0;y2<h2; y2++){
-                        //F2([x2,y2,0,0,1,0]); //move TTT, note we allowed teleport or this could have been messy... Alternatively, we can write directly to the S2 states
-                        // Position2.set(f3.player, x2, y2);        // we end up with this because of call stack too deep issue
-                        bytes32 qPos = positionToEntityKey(x2+T21_x, y2+T21_y);
-                        //actually the states in emojimon do NOT save whether monsters occupy a grid. We cannot hijack the position nor terrain type either.
-                        (, bytes32 ownerPlayer) = Map3.get(qPos);
-                        if (ownerPlayer == f3.player){      // unfortunately it seems that it is more interesting to have mix games not as strict subsets.
-                                                                    // if this game were a strict subset, I can only have 1 TTT game at a fixed position on game 1. which is fine as well.
-                            MarkerType2 playerMarker = Marker2.get(f3.player);  // when storing states into the composite games, we may require direct writes to tables.
-                            // F2([f3.o,0,0,1,0,0]);  //put
-                            _putMarker2(x2,y2); // choose this because of stack too deep..
-                            Marker2.set(f3.player,playerMarker);
-                            if(Winner2.get()==playerMarker){
-                                //what happens when you win?
-                                Winner3.set(f3.player);        
-                            }
-                        }
+                      //F2([x2,y2,0,0,1,0]); //move TTT, note we allowed teleport or this could have been messy... Alternatively, we can write directly to the S2 states
+                      Position2.set(f3.player, x2, y2);        // we end up with this because of call stack too deep issue
+                      f3.qPos = positionToEntityKey(x2+T21_x, y2+T21_y);
+                      //actually the states in emojimon do NOT save whether monsters occupy a grid. We cannot hijack the position nor terrain type either.
+                      (, bytes32 ownerPlayer) = Map3.get(f3.qPos);
+                      if (ownerPlayer == f3.player){      // unfortunately it seems that it is more interesting to have mix games not as strict subsets.
+                                                                  // if this game were a strict subset, I can only have 1 TTT game at a fixed position on game 1. which is fine as well.
+                          f3.playerMarker = Marker2.get(f3.player);  // when storing states into the composite games, we may require direct writes to tables.
+                          // F2([f3.o,0,0,1,0,0]);  //put
+                          _putMarker2(x2,y2); // choose this because of stack too deep..
+                          Marker2.set(f3.player,f3.playerMarker);
+                          f3.winningMarker = Winner2.get();
+                          if(f3.winningMarker==f3.playerMarker && f3.winningMarker != MarkerType2.None){
+                              //what happens when you win?
+                              Winner3.set(f3.player);
+                              f3.winnerFound = true;
+                              break;                                        
+                          }
+                      }
+                      if (f3.winnerFound) { break;}                            
                     }
+                    if (f3.winnerFound) { break;}
+                  }
+                  if (f3.winnerFound) { break;}
                 }
+                if (f3.winnerFound) { break;}
             }
+          }
+            
         }
         if (f3.move==1) {
             //move in emojimon
             F1([f3.x,f3.y,0,0,0,1]); //move emojimon
         }
+    }
+
+    function bytes32ToString(bytes32 _bytes32) internal pure returns (string memory) {
+        uint8 i = 0;
+        bytes memory bytesArray = new bytes(64);
+        for (i = 0; i < bytesArray.length; i++) {
+
+            uint8 _f = uint8(_bytes32[i/2] & 0x0f);
+            uint8 _l = uint8(_bytes32[i/2] >> 4);
+
+            bytesArray[i] = toByte(_f);
+            i = i + 1;
+            bytesArray[i] = toByte(_l);
+        }
+        return string(bytesArray);
+    }
+
+    function toByte(uint8 _uint8) internal pure returns (bytes1) {
+        if(_uint8 < 10) {
+            return bytes1(_uint8 + 48);
+        } else {
+            return bytes1(_uint8 + 87);
+        }
+    }
+
+    function toAsciiString(address x) internal pure returns (string memory) {
+    bytes memory s = new bytes(40);
+    for (uint i = 0; i < 20; i++) {
+        bytes1 b = bytes1(uint8(uint(uint160(x)) / (2**(8*(19 - i)))));
+        bytes1 hi = bytes1(uint8(b) / 16);
+        bytes1 lo = bytes1(uint8(b) - 16 * uint8(hi));
+        s[2*i] = char(hi);
+        s[2*i+1] = char(lo);            
+    }
+    return string(s);
+    }
+
+    function char(bytes1 b) internal pure returns (bytes1 c) {
+        if (uint8(b) < 10) return bytes1(uint8(b) + 0x30);
+        else return bytes1(uint8(b) + 0x57);
     }
 
 
@@ -144,8 +202,8 @@ contract F3System is System {
     require(encounter.exists, "not in encounter");
 
     uint256 rand = uint256(keccak256(abi.encode(player, encounter.monster, encounter.catchAttempts, blockhash(block.number - 1), block.difficulty)));
-    if (rand % 2 == 0) {
-        // 50% chance to catch monster
+    if (rand % 10 != 0) {
+        // 90% chance to catch monster
         MonsterCatchAttempt1.emitEphemeral(player, MonsterCatchResult1.Caught);
         OwnedBy1.set(encounter.monster, player);
         Encounter1.deleteRecord(player);
@@ -199,7 +257,7 @@ contract F3System is System {
     require(!Encounter1.getExists(player), "cannot move during an encounter");
 
     (uint32 fromX, uint32 fromY) = Position1.get(player);
-    require(_distance(fromX, fromY, x, y) == 1, "can only move to adjacent spaces");
+    // require(_distance(fromX, fromY, x, y) == 1, "can only move to adjacent spaces");
 
     // Constrain position to map size, wrapping around if necessary
     (uint32 width, uint32 height, ) = MapConfig1.get();
@@ -215,7 +273,7 @@ contract F3System is System {
 
     if (Encounterable1.get(player) && EncounterTrigger1.get(position)) {
         uint256 rand = uint256(keccak256(abi.encode(player, position, blockhash(block.number - 1), block.difficulty)));
-        if (rand % 5 == 0) {
+        if (rand % 10 != 0) {
         _startEncounter(player);
         }
     }

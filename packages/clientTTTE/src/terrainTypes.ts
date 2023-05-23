@@ -12,7 +12,7 @@ export const terrainTypes: Record<TerrainType, TerrainConfig> = {
     emoji: "🌳",
   },
   [TerrainType.Boulder]: {
-    emoji: "🪨",
+    emoji: "🛢️",
   },
   
   [TerrainType.X]: {
